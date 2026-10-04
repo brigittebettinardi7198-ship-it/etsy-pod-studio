@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Etsy &amp; POD Studio</title>
+<meta name="description" content="Free studio for Etsy digital products and Printify print-on-demand designs.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Amatic+SC:wght@700&family=Bebas+Neue&family=Caveat:wght@700&family=Dancing+Script:wght@700&family=Fredoka:wght@600&family=Great+Vibes&family=Josefin+Sans:wght@400;600&family=Pacifico&family=Playfair+Display:wght@700&family=Poppins:wght@400;700&family=Shrikhand&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍓</text></svg>">
+</head>
+<body>
+<header class="top">
+  <div class="brand">🍓 Etsy &amp; POD Studio</div>
+  <nav class="tabs" id="tabs">
+    <button data-tab="party" class="on">Invites &amp; Bundles</button>
+    <button data-tab="planner">GoodNotes Planners</button>
+    <button data-tab="sheets">Google Sheets</button>
+    <button data-tab="pod">Printify Designs</button>
+    <button data-tab="art">Clipart &amp; AI Art</button>
+  </nav>
+</header>
+<main>
+
+<!-- ============ PARTY ============ -->
+<section id="party" class="tab on">
+  <div class="layout">
+    <aside class="panel">
+      <h2>Party bundle</h2>
+      <label>Event <select id="p-event"><option value="first">1st Birthday</option><option value="birthday">Kids Birthday</option><option value="baby">Baby Shower</option></select></label>
+      <label>Theme <select id="p-theme"></select></label>
+      <label>Colors <select id="p-pal"></select></label>
+      <div class="row"><button id="p-shuffle" class="ghost">🔀 Shuffle art</button><button id="p-reset" class="ghost">↺ Sample text</button></div>
+      <label class="check"><input type="checkbox" id="p-useimg"> Use my clipart (from the Clipart &amp; AI Art tab)</label>
+      <details open><summary>Details on the cards</summary>
+        <div class="fields" id="p-fields"></div>
+      </details>
+    </aside>
+    <div class="work">
+      <div class="actions">
+        <button id="p-zip" class="primary">⬇ Download whole bundle (ZIP)</button>
+        <label class="check"><input type="checkbox" id="p-blanks" checked> Include blank backgrounds for Canva</label>
+        <span id="p-status" class="status"></span>
+      </div>
+      <div class="grid" id="p-grid"></div>
+      <div class="listing-wrap"><div class="row"><h3>Etsy listing</h3><label>Delivery <select id="p-delivery"><option value="personal">I personalize it for the buyer</option><option value="canva">Editable Canva template</option></select></label><label>For <select id="p-kind"><option value="bundle">Bundle</option><option value="invite">Invitation only</option></select></label></div><div id="p-listing"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLANNER ============ -->
+<section id="planner" class="tab">
+  <div class="layout">
+    <aside class="panel">
+      <h2>GoodNotes digital planner</h2>
+      <label>Year <input id="pl-year" type="number" min="2024" max="2040"></label>
+      <label>Style <select id="pl-style"></select></label>
+      <label>Colors <select id="pl-pal"></select></label>
+      <label>Week starts <select id="pl-ws"><option value="1">Monday</option><option value="0">Sunday</option></select></label>
+      <label>Cover title <input id="pl-title" value="Digital Planner"></label>
+      <button id="pl-go" class="primary">⬇ Build hyperlinked PDF</button>
+      <p class="status" id="pl-status"></p>
+    </aside>
+    <div class="work">
+      <div class="card info">
+        <h3>What's inside</h3>
+        <ul><li>iPad landscape pages (1194 x 834 pt) for GoodNotes, Notability, Noteshelf</li><li>Cover → Year at a glance → 12 monthly calendars → a weekly spread for every week → dot-grid notes</li><li>Clickable side tabs on every page (Year, Jan–Dec, Notes)</li><li>Tap any date on a month to jump to its week; prev/next week links; tap a day's date to go back to its month</li></ul>
+        <canvas id="pl-preview" width="1194" height="834"></canvas>
+        <p class="hint">Preview of the color style (the real pages are in the PDF).</p>
+      </div>
+      <div class="listing-wrap"><h3>Etsy listing</h3><div id="pl-listing"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHEETS ============ -->
+<section id="sheets" class="tab">
+  <div class="layout">
+    <aside class="panel">
+      <h2>Google Sheets template</h2>
+      <label>Template <select id="s-type"></select></label>
+      <label>Colors <select id="s-pal"></select></label>
+      <label>Year <input id="s-year" type="number" min="2024" max="2040"></label>
+      <button id="s-go" class="primary">⬇ Download .xlsx</button>
+      <p class="hint">Google Sheets: Drive → New → File upload → open with Google Sheets. Formulas, dropdowns and colors carry over.</p>
+      <p class="status" id="s-status"></p>
+    </aside>
+    <div class="work">
+      <div class="card info" id="s-info"></div>
+      <div class="listing-wrap"><h3>Etsy listing</h3><div id="s-listing"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ POD ============ -->
+<section id="pod" class="tab">
+  <div class="layout">
+    <aside class="panel">
+      <h2>Printify design</h2>
+      <label>Product <select id="d-product"></select></label>
+      <div class="row" id="d-custom" hidden><label>W px <input id="d-w" type="number" value="3000"></label><label>H px <input id="d-h" type="number" value="3000"></label></div>
+      <label>Design type <select id="d-mode"><option value="quote">Quote / text</option><option value="combo">Illustration + text</option><option value="illus">Illustration only</option></select></label>
+      <label>Text (one line per row) <textarea id="d-text" rows="3">Mama
+Needs Coffee</textarea></label>
+      <label>Text style <select id="d-style"></select></label>
+      <div class="row"><label>Main color <input type="color" id="d-c1" value="#d9536a"></label><label>Second color <input type="color" id="d-c2" value="#f6c445"></label></div>
+      <label>Illustration <select id="d-motif"></select></label>
+      <label>Art colors <select id="d-pal"></select></label>
+      <label class="check"><input type="checkbox" id="d-solid" checked> Solid colors only (best for shirt printing)</label>
+      <label id="d-muglayout-wrap">Mug layout <select id="d-muglayout"><option value="both">Design on both sides</option><option value="center">One centered design</option></select></label>
+      <button id="d-go" class="primary">⬇ Download transparent PNG</button>
+      <p class="status" id="d-status"></p>
+    </aside>
+    <div class="work">
+      <div class="row">Preview on: <span class="swatches" id="d-bg"><button data-bg="checker" class="on" title="Transparent"></button><button data-bg="#ffffff"></button><button data-bg="#111111"></button><button data-bg="#cfcac4"></button><button data-bg="#f5c7cf"></button><button data-bg="#a9c3a1"></button></span></div>
+      <div class="pod-stage" id="d-stage"></div>
+      <p class="hint" id="d-size"></p>
+      <div class="listing-wrap"><h3>Etsy listing</h3><div id="d-listing"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ART ============ -->
+<section id="art" class="tab">
+  <div class="layout">
+    <aside class="panel">
+      <h2>My clipart</h2>
+      <p class="hint">Upload your own PNG clipart (transparent background is best). It can replace the built-in art in party bundles and be used in Printify designs.</p>
+      <label class="file">＋ Upload PNG/JPG clipart <input type="file" id="a-upload" accept="image/*" multiple></label>
+      <label class="check"><input type="checkbox" id="a-white" checked> Remove white background on upload</label>
+      <div class="lib" id="a-lib"></div>
+      <button id="a-clear" class="ghost">Clear my clipart</button>
+    </aside>
+    <div class="work">
+      <div class="card">
+        <h3>Free AI art (Pollinations)</h3>
+        <p class="hint">Describe one cute illustration. Free AI art is hit-or-miss, so hit <b>Regenerate</b> until you like one. Family-friendly prompts only.</p>
+        <label>Prompt <input id="a-prompt" value="cute watercolor strawberries and white daisies"></label>
+        <div class="row"><button id="a-gen" class="primary">✨ Generate</button><button id="a-regen" class="ghost">🔁 Regenerate</button></div>
+        <div id="a-result" class="ai-result"></div>
+        <div class="note" id="a-note">
+          <b>How to use AI art:</b> the free service only lets your browser <i>show</i> the picture, not edit it. When you like one, <b>save the image</b> (right-click → Save image, or long-press on a phone), then upload it with <b>＋ Upload</b> on the left; the white background is removed for you.<br>
+          <b>Heads up:</b> free Pollinations images carry a small “pollinations.ai” logo in the corner, and their terms say to check each AI model's license before commercial use. For things you sell, the built-in art or your own licensed clipart is the safest choice.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer>Everything is made right in your browser. No accounts, no API keys, no uploads to any server.</footer>
+
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="vendor/jszip.min.js"></script>
+<script src="vendor/exceljs.min.js"></script>
+<script src="js/util.js"></script>
+<script src="js/art.js"></script>
+<script src="js/invites.js"></script>
+<script src="js/planner.js"></script>
+<script src="js/sheets.js"></script>
+<script src="js/pod.js"></script>
+<script src="js/listing.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
