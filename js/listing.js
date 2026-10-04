@@ -41,10 +41,17 @@ const LST = (() => {
     const description = `${n} for Google Sheets and Excel - pretty, simple, and automated.\n\nFEATURES\n- Multiple tabs that work together\n- Formulas calculate totals and stats for you\n- Dropdown menus and color-coded cells\n- Works on desktop, tablet and phone (Google Sheets app)\n\nHOW TO USE\n1. Download the .xlsx file.\n2. Google Sheets: open Google Drive > New > File upload, then open the file with Google Sheets (or File > Import).\n3. Excel: just open the file.\n\nThis is a DIGITAL product. No physical item will be shipped. Personal use only.`;
     return { title, tags, description };
   }
-  function pod({ product, text, motif }) {
+  function pod({ product, text, motif, style, fill }) {
     const q = (text || '').replace(/\n/g, ' ').trim(); const subj = q || (typeof motif === 'string' ? motif : 'cute') + ' design';
     const isMug = product === 'mug11';
-    const thing = isMug ? 'Coffee Mug' : 'Shirt';
+    const varsity = /varsity/i.test(style || '');
+    const thing = isMug ? 'Coffee Mug' : varsity ? `${fill && fill !== 'solid' ? (fill === 'leopard' || fill === 'cheetah' ? 'Leopard ' : fill[0].toUpperCase() + fill.slice(1) + ' ') : ''}Varsity Sweatshirt` : 'Shirt';
+    if (varsity && !isMug) {
+      const title = clampTitle([`${subj.replace(/\b\w/g, c => c.toUpperCase()).slice(0, 50)} ${thing}`, 'Retro Collegiate Crewneck', fill === 'leopard' || fill === 'cheetah' ? 'Cheetah Print Sweatshirt' : 'Trendy Sweatshirt', 'Fall Sweatshirt', 'Gift for Her', 'Oversized Crewneck']);
+      const tags = tagsFrom([q.length <= 20 ? q.toLowerCase() : '', fill === 'leopard' || fill === 'cheetah' ? 'leopard sweatshirt' : 'trendy sweatshirt', 'varsity sweatshirt', 'collegiate crewneck', fill === 'leopard' || fill === 'cheetah' ? 'cheetah print' : 'retro sweatshirt', 'fall sweatshirt', 'cozy season', 'coffee sweatshirt', 'oversized crewneck', 'gift for her', 'womens sweatshirt', 'trendy crewneck', 'comfort colors', 'autumn sweatshirt', 'aesthetic sweatshirt']);
+      const description = `${subj.replace(/\b\w/g, c => c.toUpperCase())} ${thing}\n\n- Cozy unisex crewneck (size up for an oversized fit)\n- Varsity block lettering${fill && fill !== 'solid' ? ` filled with ${fill} print` : ''}\n- See size chart and color options in photos\n\nMade to order just for you. Production 2-5 business days plus shipping.`;
+      return { title, tags, description };
+    }
     const cap = s => s.replace(/\b\w/g, c => c.toUpperCase());
     const title = clampTitle([`${cap(subj).slice(0, 60)} ${thing}`, isMug ? 'Funny Coffee Mug' : 'Graphic Tee', isMug ? 'Cute Gift Mug 11oz' : 'Unisex T-Shirt', 'Gift for Her', 'Trendy Gift', isMug ? 'Ceramic Mug' : 'Comfort Tee']);
     const words = q.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(' ').filter(w => w.length > 3);
@@ -52,6 +59,27 @@ const LST = (() => {
     const description = `${cap(subj)} ${thing}\n\n${isMug ? '- 11oz white ceramic mug\n- Design printed on both sides\n- Dishwasher and microwave safe' : '- Soft, comfortable unisex fit\n- Printed with eco-friendly inks\n- See size chart in photos'}\n\nMakes a perfect gift for birthdays, holidays, or just because!\n\nMade to order just for you. Production 2-5 business days plus shipping.`;
     return { title, tags, description };
   }
+  function engrave({ product, design, name, flower }) {
+    const n = (name || '').trim(); const cap = x => x.replace(/\b\w/g, c => c.toUpperCase());
+    const what = { skinny20: 'Engraved Skinny Tumbler 20oz', tumbler40: 'Engraved 40oz Tumbler with Handle', t40front: 'Custom Logo 40oz Tumbler', card: 'Engraved Wood Business Cards', plaque: 'Engraved Wood Sign', custom: 'Laser Engraved Gift' }[product] || 'Laser Engraved Gift';
+    const style = { name: 'Personalized Name', monogram: 'Monogram', flower: 'Birth Flower', badge: 'Custom Logo', card: 'Custom Logo' }[design] || 'Personalized';
+    const title = clampTitle([`${style} ${what}`, product === 'card' ? 'Real Wood Business Cards' : 'Laser Engraved Personalized Gift', design === 'flower' ? 'Birth Month Flower Gift' : 'Bridesmaid Proposal Gift', 'Gift for Her', 'Custom Name Gift']);
+    const base = product === 'card' ? ['wood business card', 'engraved business', 'custom business card', 'wooden cards', 'laser engraved', 'small business', 'logo business card', 'unique business card', 'bamboo business', 'qr code card', 'realtor gift', 'eco business cards', 'networking cards']
+      : ['engraved tumbler', 'personalized tumbler', 'laser engraved', 'custom tumbler', 'bridesmaid gift', 'tumbler with name', product === 'skinny20' ? 'skinny tumbler' : '40oz tumbler', design === 'flower' ? 'birth flower gift' : 'monogram tumbler', design === 'badge' ? 'custom logo tumbler' : 'name tumbler', 'gift for her', 'teacher gift', 'bachelorette gift', 'coworker gift', 'personalized gift'];
+    const tags = tagsFrom(base);
+    const description = `${style} ${what}${n ? ` (shown with "${n}")` : ''}.\n\nPERSONALIZATION\nAdd your name, initial, date or logo in the personalization box. We'll engrave it exactly as typed.\n\nDETAILS\n- Permanent laser engraving, will not peel or fade\n${product === 'card' ? '- Real wood cards, 3.5 x 2 in standard business card size\n- Engraved one side (ask about two-sided)' : '- Double-wall insulated stainless steel\n- Engraving on the front (both sides available)'}\n- Made to order\n\nPlease double-check spelling; personalized items can't be returned unless there's a defect.`;
+    return { title, tags, description };
+  }
+  function names({ kind, name, animals }) {
+    const isBasket = kind === 'basket'; const n = (name || '').trim();
+    const title = isBasket ? clampTitle(['Personalized Name Basket', 'Rope Storage Basket with Name', 'Nursery Toy Organizer', 'Baby Shower Gift', 'Custom Knitted Name Basket', 'Kids Room Decor'])
+      : clampTitle([`Personalized Embroidered Baby Blanket${animals && animals !== 'none' ? ` with ${animals === 'safari' ? 'Safari Animals' : animals.replace(/\b\w/g, c => c.toUpperCase())}` : ''}`, 'Custom Name Blanket', 'Baby Shower Gift', 'Newborn Gift', 'Nursery Keepsake']);
+    const tags = tagsFrom(isBasket ? ['name basket', 'personalized basket', 'rope basket', 'toy storage', 'nursery storage', 'baby shower gift', 'custom name basket', 'nursery decor', 'kids room decor', 'newborn gift', 'knitted name', 'storage basket', 'baby basket', 'toy organizer']
+      : ['baby blanket', 'embroidered blanket', 'name blanket', 'personalized blanket', 'baby shower gift', 'newborn gift', animals === 'lion' || animals === 'safari' ? 'safari nursery' : 'nursery decor', 'custom baby gift', 'baby name blanket', 'keepsake blanket', 'new baby gift', 'gender neutral', 'baby boy gift', 'baby girl gift']);
+    const description = isBasket ? `Personalized cotton rope basket with a hand-finished knitted yarn name${n ? ` (shown: ${n})` : ''}.\n\nPERFECT FOR\n- Nursery and toy storage\n- Baby shower and new baby gifts\n\nPERSONALIZATION\nEnter the name and choose your yarn colors.\n\nDETAILS\n- Soft, sturdy cotton rope with handles\n- Made to order; sizes in the drop-down\n\nPlease double-check spelling before ordering.`
+      : `Personalized embroidered baby blanket${n ? ` (shown: ${n})` : ''}, a keepsake they'll treasure.\n\nDETAILS\n- Name embroidered (stitched, not printed)\n- Soft, cozy and machine washable\n- Made to order\n\nPERSONALIZATION\nEnter the baby's name exactly as you'd like it stitched.\n\nGreat for baby showers, newborn and christening gifts.`;
+    return { title, tags, description };
+  }
   const text = L => `TITLE (${L.title.length} chars):\n${L.title}\n\nTAGS (${L.tags.length}):\n${L.tags.join(', ')}\n\nDESCRIPTION:\n${L.description}\n`;
-  return { party, planner, sheet, pod, text };
+  return { party, planner, sheet, pod, engrave, names, text };
 })();

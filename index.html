@@ -18,7 +18,10 @@
     <button data-tab="planner">GoodNotes Planners</button>
     <button data-tab="sheets">Google Sheets</button>
     <button data-tab="pod">Printify Designs</button>
+    <button data-tab="engrave">Engraving</button>
+    <button data-tab="names">Baby Names</button>
     <button data-tab="art">Clipart &amp; AI Art</button>
+    <button data-tab="find">Find a Supplier</button>
   </nav>
 </header>
 <main>
@@ -104,6 +107,7 @@
       <label>Text (one line per row) <textarea id="d-text" rows="3">Mama
 Needs Coffee</textarea></label>
       <label>Text style <select id="d-style"></select></label>
+      <label>Letter fill (pattern) <select id="d-fill"></select></label>
       <div class="row"><label>Main color <input type="color" id="d-c1" value="#d9536a"></label><label>Second color <input type="color" id="d-c2" value="#f6c445"></label></div>
       <label>Illustration <select id="d-motif"></select></label>
       <label>Art colors <select id="d-pal"></select></label>
@@ -117,6 +121,77 @@ Needs Coffee</textarea></label>
       <div class="pod-stage" id="d-stage"></div>
       <p class="hint" id="d-size"></p>
       <div class="listing-wrap"><h3>Etsy listing</h3><div id="d-listing"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ENGRAVING ============ -->
+<section id="engrave" class="tab">
+  <div class="layout">
+    <aside class="panel">
+      <h2>Laser engraving design</h2>
+      <label>Product size <select id="e-product"></select></label>
+      <div class="row" id="e-custom" hidden><label>W mm <input id="e-w" type="number" value="100"></label><label>H mm <input id="e-h" type="number" value="100"></label></div>
+      <label>Design <select id="e-design"></select></label>
+      <label>Name / business name <input id="e-name" value="Marley"></label>
+      <label>Subline (title, date, tagline) <input id="e-sub" value="Maid of Honor"></label>
+      <label>Script font <select id="e-font"></select></label>
+      <label id="e-flower-w">Flower <select id="e-flower"></select></label>
+      <label id="e-icon-w">Logo icon <select id="e-icon"><option value="mountain">Mountains</option><option value="heart">Heart</option><option value="paw">Paw print</option><option value="coffee">Coffee cup</option></select></label>
+      <label id="e-contact-w">Contact lines (business card) <textarea id="e-contact" rows="3">(555) 123-4567
+hello@summitcrest.com
+summitcrest.com</textarea></label>
+      <label class="check"><input type="checkbox" id="e-vertical"> Vertical name (skinny tumbler look)</label>
+      <label class="check"><input type="checkbox" id="e-both"> Repeat on both sides (wraps)</label>
+      <label>PNG resolution <select id="e-dpi"><option value="300">300 DPI</option><option value="600">600 DPI (fine detail)</option></select></label>
+      <div class="row"><button id="e-svg" class="primary">⬇ SVG (vector)</button><button id="e-png" class="primary">⬇ PNG</button></div>
+      <p class="hint">Black = engraved. Text is converted to outlines in the SVG. Sizes are <b>typical; confirm with your supplier</b> or measure your blank.</p>
+      <p class="status" id="e-status"></p>
+    </aside>
+    <div class="work">
+      <div class="row">Preview on: <span class="swatches" id="e-bg"><button data-bg="checker" class="on" title="Transparent"></button><button data-bg="#d9b98f" title="Wood"></button><button data-bg="#b9bec4" title="Steel"></button><button data-bg="#f3c9cf" title="Pink tumbler"></button><button data-bg="#7d93a8" title="Blue tumbler"></button></span></div>
+      <div class="pod-stage" id="e-stage"></div>
+      <p class="hint" id="e-size"></p>
+      <div class="card" style="margin-top:16px">
+        <h3>Photo → engraving (wood photo keepsakes)</h3>
+        <div class="row"><label class="file" style="flex:1">＋ Upload a photo <input type="file" id="ph-file" accept="image/*"></label></div>
+        <div class="row"><label>Style <select id="ph-mode"><option value="sketch">Pencil sketch</option><option value="gray">High-contrast grayscale</option><option value="dither">Dithered (pure black/white dots)</option></select></label><label>Size <select id="ph-size"><option value="8x10">8 x 10 in</option><option value="5x7">5 x 7 in</option><option value="10x8">10 x 8 in (landscape)</option><option value="11x8.5">Wood slice ~11 x 8.5 in</option></select></label><label>Shape <select id="ph-shape"><option value="rect">Rectangle</option><option value="oval">Oval / wood slice</option></select></label></div>
+        <div class="row"><label>Contrast <input type="range" id="ph-contrast" min="0" max="100" value="35"></label><label>Brightness <input type="range" id="ph-bright" min="-50" max="50" value="5"></label></div>
+        <div class="pod-stage" id="ph-stage"><p class="hint">Upload a photo to see the engraving-style preview.</p></div>
+        <button id="ph-go" class="primary" style="margin-top:10px">⬇ Download engraving PNG (300 DPI)</button>
+        <p class="hint">Engravers usually want 300 DPI minimum at final size for photos (600 for fine detail). Dark areas = burned. Many shops prefer you send the original photo too.</p>
+      </div>
+      <div class="listing-wrap"><h3>Etsy listing</h3><div id="e-listing"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BABY NAMES ============ -->
+<section id="names" class="tab">
+  <div class="layout">
+    <aside class="panel">
+      <h2>Baby name designs</h2>
+      <label>Product <select id="n-kind"><option value="basket">Rope basket: yarn / i-cord name</option><option value="blanket">Embroidered blanket: name + animals</option></select></label>
+      <label>Name <input id="n-name" value="Wyatt"></label>
+      <div id="n-basket-opts">
+        <label>Yarn colors <select id="n-yarn"></select></label>
+        <label>View <select id="n-mode"><option value="mockup">Mockup on rope basket</option><option value="letters">Textured letters only (transparent)</option><option value="guide">Stitch guide (actual size)</option></select></label>
+        <label>Name width (inches) <input id="n-ywidth" type="number" value="9" min="3" max="20" step="0.5"></label>
+      </div>
+      <div id="n-blanket-opts" hidden>
+        <label>Font <select id="n-font"></select></label>
+        <label>Thread colors <select id="n-thread"></select></label>
+        <label>Animals <select id="n-animals"><option value="safari">Safari pair (elephant + lion)</option><option value="lion">Lion</option><option value="elephant">Elephant</option><option value="bear">Bear</option><option value="bunny">Bunny</option><option value="forest">Bear + bunny</option><option value="none">No animals</option></select></label>
+        <label>Design width (inches) <input id="n-bwidth" type="number" value="10" min="3" max="20" step="0.5"></label>
+      </div>
+      <div class="row"><button id="n-svg" class="primary">⬇ SVG</button><button id="n-png" class="primary">⬇ PNG (300 DPI)</button></div>
+      <p class="hint" id="n-note"></p>
+      <p class="status" id="n-status"></p>
+    </aside>
+    <div class="work">
+      <div class="pod-stage checker" id="n-stage"></div>
+      <p class="hint" id="n-info"></p>
+      <div class="listing-wrap"><h3>Etsy listing</h3><div id="n-listing"></div></div>
     </div>
   </div>
 </section>
@@ -147,12 +222,30 @@ Needs Coffee</textarea></label>
     </div>
   </div>
 </section>
+<!-- ============ FIND A SUPPLIER ============ -->
+<section id="find" class="tab">
+  <div class="layout">
+    <aside class="panel">
+      <h2>Find a supplier</h2>
+      <label class="file">＋ Upload a product photo <input type="file" id="f-file" accept="image/*"></label>
+      <div id="f-preview" class="ai-result"></div>
+      <label>Product type <select id="f-type"></select></label>
+      <p class="hint">Free image-search sites can't receive your photo from this app automatically (that needs paid APIs). Open one below and upload the same photo there.</p>
+      <div id="f-search"></div>
+    </aside>
+    <div class="work">
+      <div class="card"><h3>Suppliers we researched for this product type</h3><div id="f-list"></div>
+      <p class="hint">Prices and times are as published (or reported by trackers) in Oct 2026. Always confirm on the supplier's site and order a sample first. We can't see which supplier a specific Etsy shop uses; image search only finds matching sources.</p></div>
+    </div>
+  </div>
+</section>
 </main>
 <footer>Everything is made right in your browser. No accounts, no API keys, no uploads to any server.</footer>
 
 <script src="vendor/jspdf.umd.min.js"></script>
 <script src="vendor/jszip.min.js"></script>
 <script src="vendor/exceljs.min.js"></script>
+<script src="vendor/opentype.min.js"></script>
 <script src="js/util.js"></script>
 <script src="js/art.js"></script>
 <script src="js/invites.js"></script>
@@ -160,6 +253,10 @@ Needs Coffee</textarea></label>
 <script src="js/sheets.js"></script>
 <script src="js/pod.js"></script>
 <script src="js/listing.js"></script>
+<script src="js/vec.js"></script>
+<script src="js/engrave.js"></script>
+<script src="js/names.js"></script>
+<script src="js/suppliers.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

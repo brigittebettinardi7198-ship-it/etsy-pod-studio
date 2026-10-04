@@ -12,7 +12,7 @@ const U = (() => {
   const FONT_SPECS = [
     ['Dancing Script', '700'], ['Great Vibes', '400'], ['Playfair Display', '700'], ['Fredoka', '600'],
     ['Josefin Sans', '600'], ['Josefin Sans', '400'], ['Pacifico', '400'], ['Shrikhand', '400'], ['Bebas Neue', '400'],
-    ['Amatic SC', '700'], ['Poppins', '400'], ['Poppins', '700'], ['Abril Fatface', '400'], ['Caveat', '700']
+    ['Amatic SC', '700'], ['Poppins', '400'], ['Poppins', '700'], ['Abril Fatface', '400'], ['Caveat', '700'], ['Graduate', '400'], ['Allura', '400']
   ];
   let fontsReady = null;
   function loadFonts() {

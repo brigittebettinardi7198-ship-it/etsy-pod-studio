@@ -48,3 +48,10 @@ button.mini{padding:4px 9px;font-size:12px}
 .note{background:#fff7e6;border:1px solid #f6e0b0;border-radius:12px;padding:12px;font-size:13px}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:24px}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:#3b2f30;color:#fff;padding:10px 16px;border-radius:12px;transition:.25s;z-index:9;font-size:14px}#toast.show{transform:translateX(-50%) translateY(0)}
+
+@font-face{font-family:"Graduate";src:url(fonts/Graduate-Regular.ttf) format("truetype");font-display:swap}
+@font-face{font-family:"Allura";src:url(fonts/Allura-Regular.ttf) format("truetype");font-display:swap}
+.sup{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0;font-size:13.5px}.sup b a{color:var(--pink)}.sup .m{color:var(--muted);font-size:12.5px}
+.sbtn{display:block;margin:8px 0}.sbtn a{display:inline-block;background:var(--pink);color:#fff;text-decoration:none;padding:7px 12px;border-radius:10px;font-weight:600;font-size:13px}.sbtn small{display:block;color:var(--muted);margin-top:3px}
+.pod-stage svg,.pod-stage img{max-width:100%;max-height:70vh;height:auto}
+[hidden]{display:none!important}

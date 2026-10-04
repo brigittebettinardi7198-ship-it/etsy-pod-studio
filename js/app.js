@@ -10,7 +10,7 @@
   $$('#tabs button').forEach(b => b.onclick = () => {
     $$('#tabs button').forEach(x => x.classList.toggle('on', x === b));
     $$('.tab').forEach(t => t.classList.toggle('on', t.id === b.dataset.tab));
-    if (b.dataset.tab === 'pod') renderPod(); if (b.dataset.tab === 'planner') plannerPreview();
+    if (b.dataset.tab === 'pod') renderPod(); if (b.dataset.tab === 'engrave') renderEng(); if (b.dataset.tab === 'names') renderNames(); if (b.dataset.tab === 'planner') plannerPreview();
     window.scrollTo(0, 0);
   });
 
@@ -109,11 +109,11 @@
   };
 
   // ---------- POD ----------
-  opt($('#d-product'), POD.PRODUCTS, 'label'); opt($('#d-style'), POD.STYLES); opt($('#d-pal'), ART.PALETTES);
+  opt($('#d-product'), POD.PRODUCTS, 'label'); opt($('#d-style'), POD.STYLES); opt($('#d-fill'), POD.FILLS); opt($('#d-pal'), ART.PALETTES);
   function motifOptions() { const cur = $('#d-motif').value; $('#d-motif').innerHTML = ART.MOTIF_NAMES.map(m => `<option value="${m}">${m[0].toUpperCase() + m.slice(1)}</option>`).join('') + state.images.map((_, i) => `<option value="img${i}">My clipart #${i + 1}</option>`).join(''); if (cur && $(`#d-motif option[value="${cur}"]`)) $('#d-motif').value = cur; }
   motifOptions(); $('#d-motif').value = 'strawberry';
   let podBg = 'checker';
-  const podOpts = () => { const m = $('#d-motif').value; return { product: $('#d-product').value, w: +$('#d-w').value, h: +$('#d-h').value, mode: $('#d-mode').value, style: $('#d-style').value, text: $('#d-text').value, c1: $('#d-c1').value, c2: $('#d-c2').value, motif: m.startsWith('img') ? null : m, image: m.startsWith('img') ? state.images[+m.slice(3)] : null, pal: $('#d-pal').value, solid: $('#d-solid').checked, mugLayout: $('#d-muglayout').value, seed: state.seed }; };
+  const podOpts = () => { const m = $('#d-motif').value; return { product: $('#d-product').value, w: +$('#d-w').value, h: +$('#d-h').value, mode: $('#d-mode').value, style: $('#d-style').value, fill: $('#d-fill').value, text: $('#d-text').value, c1: $('#d-c1').value, c2: $('#d-c2').value, motif: m.startsWith('img') ? null : m, image: m.startsWith('img') ? state.images[+m.slice(3)] : null, pal: $('#d-pal').value, solid: $('#d-solid').checked, mugLayout: $('#d-muglayout').value, seed: state.seed }; };
   async function renderPod() {
     await U.loadFonts(); const o = podOpts(); $('#d-custom').hidden = o.product !== 'custom'; $('#d-muglayout-wrap').hidden = o.product !== 'mug11';
     const full = o.product === 'custom' ? [o.w, o.h] : [POD.PRODUCTS[o.product].w, POD.PRODUCTS[o.product].h];
@@ -123,8 +123,9 @@
     showListing($('#d-listing'), LST.pod(o), 'pod-listing');
   }
   const rpod = debounce(renderPod);
-  ['#d-product', '#d-mode', '#d-style', '#d-c1', '#d-c2', '#d-motif', '#d-pal', '#d-solid', '#d-muglayout', '#d-w', '#d-h'].forEach(s => $(s).oninput = rpod);
+  ['#d-product', '#d-mode', '#d-fill', '#d-c1', '#d-c2', '#d-motif', '#d-pal', '#d-solid', '#d-muglayout', '#d-w', '#d-h'].forEach(s => $(s).oninput = rpod);
   $('#d-text').oninput = rpod;
+  $('#d-style').oninput = () => { const v = $('#d-style').value; if (v.startsWith('varsity')) { $('#d-c1').value = '#c8a27a'; $('#d-c2').value = '#3a2a20'; $('#d-fill').value = 'leopard'; if (!/\n/.test($('#d-text').value)) $('#d-text').value = 'Cozy\nseason'; $('#d-mode').value = 'quote'; } rpod(); };
   $('#d-bg').onclick = e => { const b = e.target.closest('button'); if (!b) return; podBg = b.dataset.bg; $$('#d-bg button').forEach(x => x.classList.toggle('on', x === b)); rpod(); };
   $$('#d-bg button').forEach(b => { if (b.dataset.bg !== 'checker') b.style.background = b.dataset.bg; else b.className += ' checker'; });
   $('#d-go').onclick = async () => {
@@ -163,9 +164,93 @@
   }
   $('#a-gen').onclick = () => aiGenerate(false); $('#a-regen').onclick = () => aiGenerate(true);
 
+  // ---------- ENGRAVING ----------
+  opt($('#e-product'), ENG.PRODUCTS, 'label'); opt($('#e-design'), ENG.DESIGNS); opt($('#e-font'), VEC.FONT_LABELS);
+  $('#e-flower').innerHTML = Object.entries(VEC.FLOWERS).map(([k, v]) => `<option value="${k}">${v.label || k}</option>`).join('');
+  $('#e-product').value = 'skinny20'; $('#e-vertical').checked = true;
+  let engBg = 'checker';
+  const engOpts = () => ({ product: $('#e-product').value, w: +$('#e-w').value, h: +$('#e-h').value, design: $('#e-design').value, font: $('#e-font').value, name: $('#e-name').value, sub: $('#e-sub').value, initial: ($('#e-name').value.trim()[0] || 'M').toUpperCase(), flower: $('#e-flower').value, icon: $('#e-icon').value, contact: $('#e-contact').value, vertical: $('#e-vertical').checked, both: $('#e-both').checked });
+  let engSvg = null;
+  async function renderEng() {
+    const o = engOpts(); const P = ENG.PRODUCTS[o.product];
+    $('#e-custom').hidden = o.product !== 'custom';
+    $('#e-flower-w').hidden = o.design !== 'flower'; $('#e-icon-w').hidden = o.design !== 'badge'; $('#e-contact-w').hidden = o.design !== 'card';
+    try {
+      const r = await ENG.build(o); engSvg = r;
+      const st = $('#e-stage'); st.innerHTML = r.svg; const s = st.firstElementChild; s.removeAttribute('width'); s.removeAttribute('height'); s.style.width = '100%';
+      st.className = 'pod-stage' + (engBg === 'checker' ? ' checker' : ''); st.style.background = engBg === 'checker' ? '' : engBg;
+      const dpi = +$('#e-dpi').value;
+      $('#e-size').textContent = `${r.W} x ${r.H} mm (${(r.W / 25.4).toFixed(2)} x ${(r.H / 25.4).toFixed(2)} in). PNG: ${Math.round(r.W / 25.4 * dpi)} x ${Math.round(r.H / 25.4 * dpi)} px at ${dpi} DPI. ${P.wrap ? 'Wrap size is typical; confirm with your supplier or measure your tumbler.' : ''}`;
+      showListing($('#e-listing'), LST.engrave(o), `engraved-${o.product}-listing`);
+    } catch (err) { $('#e-status').textContent = 'Error: ' + err.message; }
+  }
+  const reng = debounce(renderEng);
+  ['#e-product', '#e-design', '#e-font', '#e-flower', '#e-icon', '#e-vertical', '#e-both', '#e-dpi', '#e-w', '#e-h'].forEach(s => $(s).oninput = reng);
+  ['#e-name', '#e-sub', '#e-contact'].forEach(s => $(s).oninput = reng);
+  $('#e-design').addEventListener('input', () => { const d = $('#e-design').value; if (d === 'card') { $('#e-product').value = 'card'; $('#e-name').value = 'Summit Crest'; $('#e-sub').value = 'Coffee Roasters'; $('#e-font').value = 'serif'; } else if (d === 'badge') { $('#e-product').value = 't40front'; $('#e-name').value = 'Summit Crest'; $('#e-sub').value = 'Est. 2026'; } else if (d === 'flower') { $('#e-product').value = 'tumbler40'; $('#e-sub').value = ''; $('#e-vertical').checked = false; } });
+  $('#e-bg').onclick = e => { const b = e.target.closest('button'); if (!b) return; engBg = b.dataset.bg; $$('#e-bg button').forEach(x => x.classList.toggle('on', x === b)); renderEng(); };
+  $$('#e-bg button').forEach(b => { if (b.dataset.bg !== 'checker') b.style.background = b.dataset.bg; else b.className += ' checker'; });
+  const engName = () => `${U.slug($('#e-name').value || 'design')}-${$('#e-design').value}-${$('#e-product').value}`;
+  $('#e-svg').onclick = async () => { const r = await ENG.build(engOpts()); U.download(VEC.svgBlob(r.svg), engName() + '.svg'); };
+  $('#e-png').onclick = async () => {
+    const b = $('#e-png'); b.disabled = true; $('#e-status').textContent = 'Rendering PNG…';
+    try { const r = await ENG.build(engOpts()); const dpi = +$('#e-dpi').value; const cv = await VEC.toCanvas(r.svg, r.W / 25.4 * dpi, r.H / 25.4 * dpi); U.download(await U.pngBlob(cv, dpi), `${engName()}-${dpi}dpi.png`); $('#e-status').textContent = 'Done!'; }
+    catch (err) { $('#e-status').textContent = 'Error: ' + err.message; }
+    b.disabled = false;
+  };
+  // photo -> engraving
+  let phImg = null;
+  const phOpts = (dpi) => { const [w, h] = $('#ph-size').value.split('x').map(Number); return { mode: $('#ph-mode').value, wIn: w, hIn: h, dpi, contrast: +$('#ph-contrast').value, brightness: +$('#ph-bright').value, shape: $('#ph-shape').value }; };
+  function renderPhoto() { if (!phImg) return; const o = phOpts(60); const cv = ENG.photo(phImg, o); cv.className = 'checker'; const st = $('#ph-stage'); st.innerHTML = ''; st.appendChild(cv); }
+  const rph = debounce(renderPhoto, 300);
+  ['#ph-mode', '#ph-size', '#ph-shape', '#ph-contrast', '#ph-bright'].forEach(s => $(s).oninput = rph);
+  $('#ph-file').onchange = async e => { const f = e.target.files[0]; if (!f) return; phImg = await U.fileToImage(f); renderPhoto(); };
+  $('#ph-go').onclick = async () => {
+    if (!phImg) { U.toast('Upload a photo first'); return; }
+    const b = $('#ph-go'); b.disabled = true; $('#e-status').textContent = 'Processing photo at 300 DPI…'; await new Promise(r => setTimeout(r, 30));
+    try { const o = phOpts(300); const cv = ENG.photo(phImg, o); U.download(await U.pngBlob(cv, 300), `photo-engraving-${o.mode}-${$('#ph-size').value}in-300dpi.png`); $('#e-status').textContent = 'Done!'; }
+    catch (err) { $('#e-status').textContent = 'Error: ' + err.message; }
+    b.disabled = false;
+  };
+
+  // ---------- BABY NAMES ----------
+  opt($('#n-yarn'), NAM.YARNS); opt($('#n-thread'), NAM.THREADS); opt($('#n-font'), VEC.FONT_LABELS); $('#n-font').value = 'varsity';
+  const namOpts = () => ({ kind: $('#n-kind').value, name: $('#n-name').value, yarn: $('#n-yarn').value, mode: $('#n-mode').value, ywIn: +$('#n-ywidth').value || 9, font: $('#n-font').value, thread: $('#n-thread').value, animals: $('#n-animals').value, bwIn: +$('#n-bwidth').value || 10 });
+  const namBuild = o => o.kind === 'basket' ? NAM.yarn({ wIn: o.ywIn, yarn: o.yarn, mode: o.mode, name: o.name }) : NAM.blanket({ wIn: o.bwIn, font: o.font, thread: o.thread, animals: o.animals, name: o.name });
+  async function renderNames() {
+    const o = namOpts(); $('#n-basket-opts').hidden = o.kind !== 'basket'; $('#n-blanket-opts').hidden = o.kind !== 'blanket';
+    try {
+      const r = await namBuild(o); const st = $('#n-stage'); st.innerHTML = r.svg; const s = st.firstElementChild; s.removeAttribute('width'); s.removeAttribute('height'); s.style.width = '100%';
+      $('#n-info').textContent = `${(r.W / 25.4).toFixed(1)} x ${(r.H / 25.4).toFixed(1)} in. ` + (o.kind === 'blanket' ? `Thread colors: ${r.colors.join(', ')}` : o.mode === 'guide' ? 'Print at 100% scale. Lay the i-cord along the outline and stitch it down; numbers show the yarn color per letter.' : o.mode === 'letters' ? 'Transparent PNG of the yarn letters, for mockups or a Printify/Etsy listing photo.' : 'Listing mockup: name on a natural cotton rope basket.');
+      $('#n-note').innerHTML = o.kind === 'blanket' ? '<b>Embroidery note:</b> this is the artwork. Embroidery machines need a <b>digitized</b> stitch file (DST, PES, JEF…). Your embroidery supplier usually digitizes it from this PNG/SVG, often for a one-time fee. Flat colors and simple shapes keep that cost down.' : 'Yarn names are hand-made (knitted i-cord or wrapped cord stitched onto the basket). Use the stitch guide as the template; use the mockup for listing photos.';
+      showListing($('#n-listing'), LST.names({ kind: o.kind, name: o.name, animals: o.animals }), `${o.kind}-name-listing`);
+    } catch (err) { $('#n-status').textContent = 'Error: ' + err.message; }
+  }
+  const rnam = debounce(renderNames);
+  ['#n-kind', '#n-yarn', '#n-mode', '#n-ywidth', '#n-font', '#n-thread', '#n-animals', '#n-bwidth', '#n-name'].forEach(s => $(s).oninput = rnam);
+  const namName = o => `${U.slug(o.name || 'name')}-${o.kind === 'basket' ? 'yarn-' + o.mode : 'embroidery-' + o.animals}`;
+  $('#n-svg').onclick = async () => { const o = namOpts(); const r = await namBuild(o); U.download(VEC.svgBlob(r.svg), namName(o) + '.svg'); };
+  $('#n-png').onclick = async () => {
+    const b = $('#n-png'); b.disabled = true; $('#n-status').textContent = 'Rendering PNG…';
+    try { const o = namOpts(); const r = await namBuild(o); const cv = await VEC.toCanvas(r.svg, r.W / 25.4 * 300, r.H / 25.4 * 300); U.download(await U.pngBlob(cv, 300), namName(o) + '-300dpi.png'); $('#n-status').textContent = 'Done!'; }
+    catch (err) { $('#n-status').textContent = 'Error: ' + err.message; }
+    b.disabled = false;
+  };
+
+  // ---------- FIND A SUPPLIER ----------
+  opt($('#f-type'), SUP.TYPES);
+  $('#f-search').innerHTML = SUP.SEARCH.map(s => `<div class="sbtn"><a href="${s.u}" target="_blank" rel="noopener noreferrer">Open ${s.n} ↗</a><small>${s.how}</small></div>`).join('');
+  function renderFind() {
+    const t = $('#f-type').value; const L = SUP.LIST.filter(s => s.t.includes(t));
+    $('#f-list').innerHTML = (L.length ? L : SUP.LIST).map(s => `<div class="sup"><b><a href="${s.u}" target="_blank" rel="noopener noreferrer">${s.n} ↗</a></b><div>${s.p}</div><div class="m">Etsy integration: ${s.etsy} · Time: ${s.time}</div><div class="m">${s.note}</div></div>`).join('') + (L.length ? '' : '<p class="hint">No researched supplier for this type yet; showing all. Use the image search buttons on the left.</p>');
+  }
+  $('#f-type').oninput = renderFind;
+  $('#f-file').onchange = async e => { const f = e.target.files[0]; if (!f) return; const url = URL.createObjectURL(f); $('#f-preview').innerHTML = `<img src="${url}" alt="your photo" style="max-width:100%;border-radius:10px">`; };
+  renderFind();
+
   // ---------- init ----------
   $('#p-theme').value = 'strawberry'; $('#p-pal').value = 'strawberry'; fillDefaults(); renderParty(); sheetsInfo(); plannerPreview();
 
   // Test hooks (used for automated checks)
-  window.Studio = { U, ART, state, party, podOpts, plOpts, INV, PLN, SHT, POD, LST, renderParty, renderPod };
+  window.Studio = { U, ART, state, party, podOpts, plOpts, INV, PLN, SHT, POD, LST, VEC, ENG, NAM, SUP, renderParty, renderPod, renderEng, renderNames, engOpts, namOpts };
 })();
